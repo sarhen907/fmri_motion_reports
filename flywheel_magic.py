@@ -52,6 +52,9 @@ for el in result.children:
             subj_path = outpath + "Gr5/Baseline/" + el.label
         elif el.label.startswith('2'):
             subj_path = outpath + "Gr2/Baseline/" + el.label
+        else:
+            continue
+             
 
         stopcount = 0
         midcount = 0
