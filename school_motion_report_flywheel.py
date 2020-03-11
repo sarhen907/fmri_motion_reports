@@ -95,7 +95,7 @@ for subj in subjectList:
 
 		mmmax1 = re.search("(.*)mm", myvals1)
 		mmmax1 = myvals1[:myvals1.index("mm")]
-		FDmax1 = mmmax1[68:]
+		FDmax1 = mmmax1[67:]
 
 		mymeans1 = re.findall(r'mean:(.*) ',myvals1)
 		mymeans1 = str(mymeans1)
