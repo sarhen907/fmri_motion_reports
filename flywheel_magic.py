@@ -17,6 +17,7 @@
 import flywheel
 from pprint import pprint
 import pandas as pd
+import time
 
 sectionColor = "\033[94m"
 sectionColor2 = "\033[96m"
@@ -49,7 +50,7 @@ for el in result.children:
 
         if el.label.startswith('5'):
             subj_path = outpath + "Gr5/Baseline/" + el.label
-        elif el.labl.startswith('2'):
+        elif el.label.startswith('2'):
             subj_path = outpath + "Gr2/Baseline/" + el.label
 
         stopcount = 0
