@@ -124,7 +124,7 @@ for i in range(2):
                             else:
                                 print('NO QA FILE HERE. moving on.')
 
-print(sectioncolor + "All files that ran are now in your qafile folder")
+print(pink + "All files that ran are now in your qafile folder")
 
 command ="Volumes/MusicProject/School_Study/Data/Functional/motion_reports/school_motion_report_flywheel.py"
 print(command)
