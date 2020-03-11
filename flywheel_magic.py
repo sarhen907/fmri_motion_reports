@@ -88,16 +88,13 @@ for i in range(2):
                             job_id = gear.run(inputs=inputs, destination=acquisition)
 
                             print(red + "Waiting for gear to finish......")
+                            timeout = time.time() + 1000
+                            while True:
+                                if time.time() > timeout:
+                                    print(red + 'Waited sufficient amount of time! Moving on to next part.')
+                                    break
 
                         elif i ==1:
-
-                        # timeout = time.time() + 1200
-                        # while len(acquisition.files) != 3:
-                        #     if time.time() > timeout:
-                        #         print(red + 'QA FAILED! TIMED OUT! MOVING ON.')
-                        #         break
-                        # else:
-                        #     print(acquisition.local_timestamp.isoformat())
 
                             if acquisition.label == 'StopSignal':
                                 stopcount = stopcount + 1
