@@ -1,4 +1,4 @@
-##### FLYWHEEL META DATA MANIPULATION + GEAR RUNNING + QA DOWNLOADING ####
+##### FLYWHEEL META DATA MANIPULATION + GEAR RUNNING + QA DOWNLOADING/ exporting ####
 
 
 # Sarah Hennessy 2020
@@ -96,7 +96,7 @@ for el in result.children:
                             run = str(midcount)
                             filelab = subj_path + "/MID_run%s.html" %(run)
 
-                        print(mainColor + "Downloading qa html file for %s, run %s" %(el.label, run, acquisition.label))
+                        print(mainColor + "Downloading qa html file for %s, run %s: %s" %(el.label, run, acquisition.label))
                         wnatfile = acquisition.files[3].name
                         acquisition.download_file(wantfile, filelab)
 
