@@ -85,7 +85,7 @@ for el in result.children:
                     print(red + "Waiting for gear to finish......")
 
                     timeout = time.time() + 1200
-                    while len(acquisition.files) < 3:
+                    while len(acquisition.files) != 3:
                         if time.time() > timeout:
                             print(red + 'QA FAILED! TIMED OUT! MOVING ON.')
                             break
