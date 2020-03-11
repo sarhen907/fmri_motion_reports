@@ -19,6 +19,7 @@ from pprint import pprint
 import pandas as pd
 import time
 import shutil
+import os
 
 sectionColor = "\033[94m"
 sectionColor2 = "\033[96m"
@@ -108,7 +109,11 @@ for el in result.children:
                         acquisition.download_file(wantfile,file_ext)
                         source = "/Volumes/MusicProject/School_Study/Data/Functional/motion_reports/%s" %(file_ext)
                         destination = subj_path
-                        dest = shutil.move(source,destination)
+                        if os.path.exists(filelab):
+                           print("QA already here!moving on!")
+                           continue
+                        else:
+                           dest = shutil.move(source,destination)
 
 print(sectioncolor + "All files that ran are now in your qafile folder")
 
