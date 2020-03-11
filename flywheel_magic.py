@@ -81,18 +81,21 @@ for i in range(2):
                             acquisition.replace_file_classification(dicom, {'Intent': ['Functional']}, modality='MR')
                             nifti = acquisition.files[1].name
                             acquisition.replace_file_classification(nifti, {'Intent': ['Functional']}, modality='MR')
+                            
+                            if len(acquisition.files) == 3:
+                                print(yellow + "this subject already has a qa file. moving on!")
+                            else:
+                                print(yellow + 'starting MRIQC gear for %s: %s' %(el.label,acquisition.label))
+                                inputs = {'nifti': acquisition.get_file(nifti)}
+                                config = {}
+                                job_id = gear.run(inputs=inputs, destination=acquisition)
 
-                            print(yellow + 'starting MRIQC gear for %s: %s' %(el.label,acquisition.label))
-                            inputs = {'nifti': acquisition.get_file(nifti)}
-                            config = {}
-                            job_id = gear.run(inputs=inputs, destination=acquisition)
-
-                            print(red + "Waiting for gear to finish......")
-                            timeout = time.time() + 1000
-                            while True:
-                                if time.time() > timeout:
-                                    print(red + 'Waited sufficient amount of time! Moving on to next part.')
-                                    break
+                                print(red + "Waiting for gear to finish......")
+                                timeout = time.time() + 1000
+                                while True:
+                                    if time.time() > timeout:
+                                        print(red + 'Waited sufficient amount of time! Moving on to next part.')
+                                        break
 
                         elif i ==1:
 
