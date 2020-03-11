@@ -109,7 +109,7 @@ for i in range(2):
                                 run = str(midcount)
                                 filelab = subj_path + "/MID_run%s.html" %(run)
                                 file_ext = "MID_run%s.html" %(run)
-                            if len(acquitision.files) == 3:
+                            if len(acquisition.files) == 3:
                                 print(mainColor + "Downloading qa html file for %s, run %s, %s" %(el.label, run, acquisition.label))
                                 wantfile = acquisition.files[2].name
                                 acquisition.download_file(wantfile,file_ext)
