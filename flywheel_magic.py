@@ -18,6 +18,7 @@ import flywheel
 from pprint import pprint
 import pandas as pd
 import time
+import shutil
 
 sectionColor = "\033[94m"
 sectionColor2 = "\033[96m"
@@ -47,13 +48,17 @@ for el in result.children:
 
         print('%s: %s' % (el.label, el.id))
         subject = fw.get(el.id)
+        mylab = el.label[:len(el.label)-9]
+        mylab = mylab + 'baseline'
 
         if el.label.startswith('5'):
-            subj_path = outpath + "Gr5/Baseline/" + el.label
+
+            subj_path = outpath + "Gr5/Baseline/" + mylab
         elif el.label.startswith('2'):
-            subj_path = outpath + "Gr2/Baseline/" + el.label
+            subj_path = outpath + "Gr2/Baseline/" + mylab
         else:
             continue
+
              
 
         stopcount = 0
@@ -90,15 +95,20 @@ for el in result.children:
                             stopcount = stopcount + 1
                             run = str(stopcount)
                             filelab = subj_path + "/stop_run%s.html" %(run)
+                            file_ext = "stop_run%s.html" %(run)
 
                         elif acquisition.label == "MID":
                             midcount = midcount + 1
                             run = str(midcount)
                             filelab = subj_path + "/MID_run%s.html" %(run)
+                            file_ext = "MID_run%s.html" %(run)
 
-                        print(mainColor + "Downloading qa html file for %s, run %s: %s" %(el.label, run, acquisition.label))
-                        wnatfile = acquisition.files[3].name
-                        acquisition.download_file(wantfile, filelab)
+                        print(mainColor + "Downloading qa html file for %s, run %s, %s" %(el.label, run, acquisition.label))
+                        wantfile = acquisition.files[2].name
+                        acquisition.download_file(wantfile,file_ext)
+                        source = "/Volumes/MusicProject/School_Study/Data/Functional/motion_reports/%s" %(file_ext)
+                        destination = subj_path
+                        dest = shutil.move(source,destination)
 
 print(sectioncolor + "All files that ran are now in your qafile folder")
 
