@@ -42,78 +42,87 @@ fw = flywheel.client(api_key)
 gear = fw.lookup('gears/mriqc')
 
 proj = input("Please input your flywheel group and project in the following format 'group/project': ")
-result = fw.resolve(proj)
-project = result.path[-1]
 
-for el in result.children:
 
-        print('%s: %s' % (el.label, el.id))
-        subject = fw.get(el.id)
-        mylab = el.label[:len(el.label)-9]
-        mylab = mylab + 'baseline'
+for i in range(2):
 
-        if el.label.startswith('5'):
+    result = fw.resolve(proj)
+    project = result.path[-1]
 
-            subj_path = outpath + "Gr5/Baseline/" + mylab
-        elif el.label.startswith('2'):
-            subj_path = outpath + "Gr2/Baseline/" + mylab
-        else:
-            continue
+    for el in result.children:
 
-             
+            print('%s: %s' % (el.label, el.id))
+            subject = fw.get(el.id)
+            mylab = el.label[:len(el.label)-9]
+            mylab = mylab + 'baseline'
 
-        stopcount = 0
-        midcount = 0
-        for session in subject.sessions():
-            print(sectionColor + 'Opening %s: %s' % (session.id, session.label))
-            session = fw.get(session.id)
+            stopcount = 0
+            midcount = 0
 
-            for acquisition in session.acquisitions():
-                if acquisition.label == 'StopSignal' or acquisition.label == 'MID':
-                    print(sectionColor2 + 'Fixing intent for %s: %s' %(el.label,acquisition.label))
-                    acquisition = fw.get(acquisition.id)
-                    dicom = acquisition.files[0].name
-                    acquisition.replace_file_classification(dicom, {'Intent': ['Functional']}, modality='MR')
-                    nifti = acquisition.files[1].name
-                    acquisition.replace_file_classification(nifti, {'Intent': ['Functional']}, modality='MR')
+            if el.label.startswith('5'):
+                subj_path = outpath + "Gr5/Baseline/" + mylab
+            elif el.label.startswith('2'):
+                subj_path = outpath + "Gr2/Baseline/" + mylab
+            else:
+                continue
 
-                    print(yellow + 'starting MRIQC gear for %s: %s' %(el.label,acquisition.label))
-                    inputs = {'nifti': acquisition.get_file(nifti)}
-                    config = {}
-                    job_id = gear.run(inputs=inputs, destination=acquisition)
+            for session in subject.sessions():
+                print(sectionColor + 'Opening %s: %s' % (session.id, session.label))
+                session = fw.get(session.id)
 
-                    print(red + "Waiting for gear to finish......")
+                for acquisition in session.acquisitions():
+                    if acquisition.label == 'StopSignal' or acquisition.label == 'MID':
+                        print(sectionColor2 + 'Fixing intent for %s: %s' %(el.label,acquisition.label))
+                        acquisition = fw.get(acquisition.id)
 
-                    timeout = time.time() + 1200
-                    while len(acquisition.files) != 3:
-                        if time.time() > timeout:
-                            print(red + 'QA FAILED! TIMED OUT! MOVING ON.')
-                            break
-                    else:
-                        print(acquisition.local_timestamp.isoformat())
+                        if i == 0:
+                            dicom = acquisition.files[0].name
+                            acquisition.replace_file_classification(dicom, {'Intent': ['Functional']}, modality='MR')
+                            nifti = acquisition.files[1].name
+                            acquisition.replace_file_classification(nifti, {'Intent': ['Functional']}, modality='MR')
 
-                        if acquisition.label == 'StopSignal':
-                            stopcount = stopcount + 1
-                            run = str(stopcount)
-                            filelab = subj_path + "/stop_run%s.html" %(run)
-                            file_ext = "stop_run%s.html" %(run)
+                            print(yellow + 'starting MRIQC gear for %s: %s' %(el.label,acquisition.label))
+                            inputs = {'nifti': acquisition.get_file(nifti)}
+                            config = {}
+                            job_id = gear.run(inputs=inputs, destination=acquisition)
 
-                        elif acquisition.label == "MID":
-                            midcount = midcount + 1
-                            run = str(midcount)
-                            filelab = subj_path + "/MID_run%s.html" %(run)
-                            file_ext = "MID_run%s.html" %(run)
+                            print(red + "Waiting for gear to finish......")
 
-                        print(mainColor + "Downloading qa html file for %s, run %s, %s" %(el.label, run, acquisition.label))
-                        wantfile = acquisition.files[2].name
-                        acquisition.download_file(wantfile,file_ext)
-                        source = "/Volumes/MusicProject/School_Study/Data/Functional/motion_reports/%s" %(file_ext)
-                        destination = subj_path
-                        if os.path.exists(filelab):
-                           print("QA already here!moving on!")
-                           continue
-                        else:
-                           dest = shutil.move(source,destination)
+                        elif i ==1:
+
+                        # timeout = time.time() + 1200
+                        # while len(acquisition.files) != 3:
+                        #     if time.time() > timeout:
+                        #         print(red + 'QA FAILED! TIMED OUT! MOVING ON.')
+                        #         break
+                        # else:
+                        #     print(acquisition.local_timestamp.isoformat())
+
+                            if acquisition.label == 'StopSignal':
+                                stopcount = stopcount + 1
+                                run = str(stopcount)
+                                filelab = subj_path + "/stop_run%s.html" %(run)
+                                file_ext = "stop_run%s.html" %(run)
+
+                            elif acquisition.label == "MID":
+                                midcount = midcount + 1
+                                run = str(midcount)
+                                filelab = subj_path + "/MID_run%s.html" %(run)
+                                file_ext = "MID_run%s.html" %(run)
+                            if len(acquitision.files) == 3:
+                                print(mainColor + "Downloading qa html file for %s, run %s, %s" %(el.label, run, acquisition.label))
+                                wantfile = acquisition.files[2].name
+                                acquisition.download_file(wantfile,file_ext)
+                                source = "/Volumes/MusicProject/School_Study/Data/Functional/motion_reports/%s" %(file_ext)
+                                destination = subj_path
+                                checkfile = subj_path + file_ext
+                                if os.path.exists(filelab):
+                                    print("QA already here! moving on")
+                                    continue
+                                else:
+                                    dest = shutil.move(source,destination)
+                            else:
+                                print('NO QA FILE HERE. moving on.')
 
 print(sectioncolor + "All files that ran are now in your qafile folder")
 
@@ -121,4 +130,4 @@ command ="Volumes/MusicProject/School_Study/Data/Functional/motion_reports/schoo
 print(command)
 call(command,shell = True)
 
-print(sectioncolor + "MRIQC values are now in the spreadsheet! Take a look :)")
+print(mainColor + "MRIQC values are now in the spreadsheet! Take a look :)")
